@@ -2,7 +2,7 @@ Nearest Neighbor Analysis for Single Molecule Localization Microscopy
 ==========
 
 The included Python script calculates the (k)-nearest neighbor distribution from single-molecule localization microscopy data.
-Localization tables must have the ThunderSTORM file format.
+Localization tables must have the ThunderSTORM [1] file format.
 
 The script was used for the the following publications:
 
@@ -25,4 +25,4 @@ Instruction
 
 References
 -------
-Ovesny, M., et al., ThunderSTORM: a comprehensive ImageJ plug-in for PALM and STORM data analysis and super-resolution imaging. Bioinformatics, 2014. 30(16): p. 2389-90. 
+[1] Ovesny, M., et al., ThunderSTORM: a comprehensive ImageJ plug-in for PALM and STORM data analysis and super-resolution imaging. Bioinformatics, 2014. 30(16): p. 2389-90. 
