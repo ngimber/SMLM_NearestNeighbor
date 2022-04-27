@@ -155,147 +155,148 @@ def kNN(a,b,k):# a=subject,b=reference, k=k
  
  
 for i in range(0,len(files)): # main loop
+    if(subjectIdentifyer in files[i]):
 
+        
+        
+        subjectTable=pd.read_csv(path+files[i])
+        referenceTable=pd.read_csv(path+files[i][0:files[i].find(subjectIdentifyer)]+referenceIdentifyer+".csv")
+        
+    
+        ################################
+        #auto NN
     
     
-    subjectTable=pd.read_csv(path+files[i])
-    referenceTable=pd.read_csv(path+files[i][0:files[i].find(subjectIdentifyer)]+referenceIdentifyer+".csv")
-    
-
-    ################################
-    #auto NN
-
-
-    a=subjectTable[["x [nm]","y [nm]"]].values
-    b=subjectTable[["x [nm]","y [nm]"]].values
-
-
-    if(subset>0):
-        if(subset<len(a)):
-            if(subset>packagesize):
-                print(files[i]+": generate subset")
-                np.random.shuffle(a)
-                a=a[:subset]
-                print("subset calculated")
-
-    print("start NN")
-    kNNs=kNN(a,b,k)
-    shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
-    kNNsRandom=kNN(shifted,b,k)
-    fig=plt.figure()
-    plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5,range=[0,3*np.median(kNNs)])
-    plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5,range=[0,3*np.median(kNNs)])
-    plt.title("k = "+str(k)+" Subject: "+subjectIdentifyer+" Reference: "+subjectIdentifyer)
-    plt.xlabel("NN distance [nm]")
-    plt.ylabel("Counts")
-    plt.savefig(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+subjectIdentifyer+".png")
-
-
-    saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
-    saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
-    saveMe.to_csv(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+subjectIdentifyer+".csv")
+        a=subjectTable[["x [nm]","y [nm]"]].values
+        b=subjectTable[["x [nm]","y [nm]"]].values
     
     
+        if(subset>0):
+            if(subset<len(a)):
+                if(subset>packagesize):
+                    print(files[i]+": generate subset")
+                    np.random.shuffle(a)
+                    a=a[:subset]
+                    print("subset calculated")
+    
+        print("start NN")
+        kNNs=kNN(a,b,k)
+        shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
+        kNNsRandom=kNN(shifted,b,k)
+        fig=plt.figure()
+        plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5,range=[0,3*np.median(kNNs)])
+        plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5,range=[0,3*np.median(kNNs)])
+        plt.title("k = "+str(k)+" Subject: "+subjectIdentifyer+" Reference: "+subjectIdentifyer)
+        plt.xlabel("NN distance [nm]")
+        plt.ylabel("Counts")
+        plt.savefig(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+subjectIdentifyer+".png")
     
     
-# and nov inverse   
-
-    a=referenceTable[["x [nm]","y [nm]"]].values
-    b=referenceTable[["x [nm]","y [nm]"]].values
-
-
-    if(subset>0):
-        if(subset<len(a)):
-            if(subset>packagesize):
-                print(files[i]+": generate subset")
-                np.random.shuffle(a)
-                a=a[:subset]
-                print("subset calculated")
-
-    print("start NN")
-    kNNs=kNN(a,b,k)
-    shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
-    kNNsRandom=kNN(shifted,b,k)
-    fig=plt.figure()
-    plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.title("k = "+str(k)+" Subject: "+referenceIdentifyer+" Reference: "+referenceIdentifyer)
-    plt.xlabel("NN distance [nm]")
-    plt.ylabel("Counts")
-    plt.savefig(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+referenceIdentifyer+".png")
-
-
-    saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
-    saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
-    saveMe.to_csv(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+referenceIdentifyer+".csv")
+        saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
+        saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
+        saveMe.to_csv(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+subjectIdentifyer+".csv")
+        
+        
+        
+        
+    # and nov inverse   
+    
+        a=referenceTable[["x [nm]","y [nm]"]].values
+        b=referenceTable[["x [nm]","y [nm]"]].values
     
     
+        if(subset>0):
+            if(subset<len(a)):
+                if(subset>packagesize):
+                    print(files[i]+": generate subset")
+                    np.random.shuffle(a)
+                    a=a[:subset]
+                    print("subset calculated")
     
-    ################################
-    #calc NN between channels 
-    
-
-    a=subjectTable[["x [nm]","y [nm]"]].values
-    b=referenceTable[["x [nm]","y [nm]"]].values
-
-
-    if(subset>0):
-        if(subset<len(a)):
-            if(subset>packagesize):
-                print(files[i]+": generate subset")
-                np.random.shuffle(a)
-                a=a[:subset]
-                print("subset calculated")
-
-    print("start NN")
-    kNNs=kNN(a,b,k)
-    shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
-    kNNsRandom=kNN(shifted,b,k)
-    fig=plt.figure()
-    plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.title("k = "+str(k)+" Subject: "+subjectIdentifyer+" Reference: "+referenceIdentifyer)
-    plt.xlabel("NN distance [nm]")
-    plt.ylabel("Counts")
-    plt.savefig(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+referenceIdentifyer+".png")
-
-    saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
-    saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
-    saveMe.to_csv(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+referenceIdentifyer+".csv")
+        print("start NN")
+        kNNs=kNN(a,b,k)
+        shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
+        kNNsRandom=kNN(shifted,b,k)
+        fig=plt.figure()
+        plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.title("k = "+str(k)+" Subject: "+referenceIdentifyer+" Reference: "+referenceIdentifyer)
+        plt.xlabel("NN distance [nm]")
+        plt.ylabel("Counts")
+        plt.savefig(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+referenceIdentifyer+".png")
     
     
+        saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
+        saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
+        saveMe.to_csv(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+referenceIdentifyer+".csv")
+        
+        
+        
+        ################################
+        #calc NN between channels 
+        
+    
+        a=subjectTable[["x [nm]","y [nm]"]].values
+        b=referenceTable[["x [nm]","y [nm]"]].values
     
     
+        if(subset>0):
+            if(subset<len(a)):
+                if(subset>packagesize):
+                    print(files[i]+": generate subset")
+                    np.random.shuffle(a)
+                    a=a[:subset]
+                    print("subset calculated")
     
-# the same inverse   
-
-    b=subjectTable[["x [nm]","y [nm]"]].values
-    a=referenceTable[["x [nm]","y [nm]"]].values
-
-
-    if(subset>0):
-        if(subset<len(a)):
-            if(subset>packagesize):
-                print(files[i]+": generate subset")
-                np.random.shuffle(a)
-                a=a[:subset]
-                print("subset calculated")
-
-    print("start NN")
-    kNNs=kNN(a,b,k)
-    shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
-    kNNsRandom=kNN(shifted,b,k)
-    fig=plt.figure()
-    plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
-    plt.title("k = "+str(k)+" Subject: "+referenceIdentifyer+" Reference: "+subjectIdentifyer)
-    plt.xlabel("NN distance [nm]")
-    plt.ylabel("Counts")
-    plt.savefig(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+subjectIdentifyer+".png")
-
-    saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
-    saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
-    saveMe.to_csv(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+subjectIdentifyer+".csv")
+        print("start NN")
+        kNNs=kNN(a,b,k)
+        shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
+        kNNsRandom=kNN(shifted,b,k)
+        fig=plt.figure()
+        plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.title("k = "+str(k)+" Subject: "+subjectIdentifyer+" Reference: "+referenceIdentifyer)
+        plt.xlabel("NN distance [nm]")
+        plt.ylabel("Counts")
+        plt.savefig(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+referenceIdentifyer+".png")
+    
+        saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
+        saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
+        saveMe.to_csv(newPath+files[i]+"_S-"+subjectIdentifyer+"_R-"+referenceIdentifyer+".csv")
+        
+        
+        
+        
+        
+    # the same inverse   
+    
+        b=subjectTable[["x [nm]","y [nm]"]].values
+        a=referenceTable[["x [nm]","y [nm]"]].values
     
     
+        if(subset>0):
+            if(subset<len(a)):
+                if(subset>packagesize):
+                    print(files[i]+": generate subset")
+                    np.random.shuffle(a)
+                    a=a[:subset]
+                    print("subset calculated")
+    
+        print("start NN")
+        kNNs=kNN(a,b,k)
+        shifted=np.where((a+shift) < a.max(), a+shift, a+shift-a.max())
+        kNNsRandom=kNN(shifted,b,k)
+        fig=plt.figure()
+        plt.hist(np.array(kNNs)[np.array(kNNs)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.hist(np.array(kNNsRandom)[np.array(kNNsRandom)<np.median(kNNs)*10],bins=41,alpha=0.5)
+        plt.title("k = "+str(k)+" Subject: "+referenceIdentifyer+" Reference: "+subjectIdentifyer)
+        plt.xlabel("NN distance [nm]")
+        plt.ylabel("Counts")
+        plt.savefig(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+subjectIdentifyer+".png")
+    
+        saveMe=pd.DataFrame([a[:,0],a[:,1],kNNs,kNNsRandom]).T
+        saveMe.columns=["x [nm]","y [nm]","kNN k="+str(k),"toroidal shift "+str(shift)]
+        saveMe.to_csv(newPath+files[i]+"_S-"+referenceIdentifyer+"_R-"+subjectIdentifyer+".csv")
+        
+        
     
